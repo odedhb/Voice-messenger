@@ -118,7 +118,6 @@ public class MainActivity extends Activity {
     private void refreshView() {
 
         if (App.currentContact != null) {
-
             ((TextView) findViewById(R.id.recipient_name)).setText(App.currentContact.name);
         }
 
@@ -135,7 +134,7 @@ public class MainActivity extends Activity {
             speech = App.currentText + " should I send it?";
         } else if (App.readyToSend && !App.messageSent) {
             speech = "Message sent";
-            (new Texting()).send(App.currentContact.phoneNumber,App.currentText);
+            (new Texting()).send(App.currentContact.phoneNumber, App.currentText);
             App.messageSent = true;
         }
 

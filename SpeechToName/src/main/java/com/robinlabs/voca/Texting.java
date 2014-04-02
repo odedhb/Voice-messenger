@@ -1,7 +1,5 @@
 package com.robinlabs.voca;
 
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.telephony.SmsManager;
 
 /**
@@ -10,9 +8,8 @@ import android.telephony.SmsManager;
 public class Texting {
 
 
-    public void send(String phoneNumber, String message)
-    {
+    public void send(String phoneNumber, String message) {
         SmsManager manager = SmsManager.getDefault();
-        manager.sendTextMessage(phoneNumber,null,message,null,null);
+        manager.sendTextMessage(phoneNumber, null, message, null, null);
     }
 }

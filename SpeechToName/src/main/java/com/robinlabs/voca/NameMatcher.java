@@ -150,10 +150,6 @@ public class NameMatcher {
             for (String match : matchParts) {
                 for (String name : nameParts) {
 
-                    //TODO
-                    String phoneticName = LangUtils.normalizePhonetics(name);
-                    String phoneticMatch = LangUtils.normalizePhonetics(match);
-
                     score = new BigDecimal(10000);
                     //the lower the better
 

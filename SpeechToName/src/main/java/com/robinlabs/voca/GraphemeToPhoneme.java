@@ -10,22 +10,13 @@ import java.util.TreeMap;
  * Created by oded on 3/31/14.
  */
 public class GraphemeToPhoneme {
-    public static String convert(String grapheme) {
 //        http://www.dyslexia-reading-well.com/44-phonemes-in-english.html
-//        https://code.google.com/p/phonetisaurus/
-//        http://cmusphinx.sourceforge.net/2012/05/letter-to-phoneme-conversion-in-cmu-sphinx-4-literature-review/
-        graphemeToPhonemeMap();
-
-        return grapheme;
-    }
 
 
-    //        http://www.dyslexia-reading-well.com/44-phonemes-in-english.html
     static TreeMap<String, String> graphemeToPhonemeMap() {
         TreeMap<String, String> graphemeToPhonemeSortedMap = new TreeMap<String, String>();
 
         HashMap<String, String> arrayMap = new HashMap<String, String>();
-
 
         //consonants
         arrayMap.put("/b/", "b, bb");

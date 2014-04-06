@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
 
     protected void onPartialSpeech(ArrayList<String> matches) {
         App.currentText = matches.get(0);
-        refreshView();
+        ((TextView) findViewById(R.id.message_text)).setText(App.currentText);
     }
 
 

@@ -6,13 +6,12 @@ public class App extends android.app.Application {
 
     private static App instance;
 
-    public static Contact currentContact;
-    public static String currentText;
-    public static boolean readyToSend;
+    static Task task;
 
 
     public App() {
         instance = this;
+        task = new Task();
     }
 
     public static Context getContext() {
@@ -20,8 +19,6 @@ public class App extends android.app.Application {
     }
 
     public static void cleanStatus() {
-        currentContact = null;
-        currentText = null;
-        readyToSend = false;
+        task = new Task();
     }
 }

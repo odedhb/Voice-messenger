@@ -130,7 +130,7 @@ public class NameMatcher {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 //                        activity.startActivity(CONTACTS.get(buttons[which]).intent);
-                        App.currentContact = CONTACTS.get(buttons[which]);
+                        App.task.currentContact = CONTACTS.get(buttons[which]);
                     }
                 }
         );
@@ -212,7 +212,7 @@ public class NameMatcher {
         });
 
 
-        App.currentContact = finalContacts.get(0);
+        App.task.currentContact = finalContacts.get(0);
 
 //        showContactsDialog(contactsWithScores, finalContacts);
     }

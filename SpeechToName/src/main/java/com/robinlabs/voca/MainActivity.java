@@ -2,6 +2,7 @@ package com.robinlabs.voca;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +29,6 @@ public class MainActivity extends Activity {
         parseSpeech = new ParseSpeech(this);
 
         nameMatcher = new NameMatcher(this);
-        voice = new Voice(this);
 
         findViewById(R.id.who_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,16 +40,16 @@ public class MainActivity extends Activity {
         findViewById(R.id.recipient_name).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                App.currentContact = null;
-                App.readyToSend = false;
+                App.task.currentContact = null;
+                App.task.readyToSend = false;
                 //recognizeVoice();
             }
         });
         findViewById(R.id.message_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                App.currentText = null;
-                App.readyToSend = false;
+                App.task.currentText = null;
+                App.task.readyToSend = false;
                 //recognizeVoice();
             }
         });
@@ -58,19 +58,21 @@ public class MainActivity extends Activity {
     }
 
     protected void onSpeech(ArrayList<String> matches) {
+        onPartialSpeech(matches);
         whatNext();
     }
 
     private void whatNext() {
         String speech = null;
-        if (App.currentContact == null && App.currentText == null) {
+        if (App.task.currentContact == null && App.task.currentText == null) {
             speech = "Say something like: text John that I'm on my way";
-        } else if (App.currentContact != null && App.currentText != null && !App.readyToSend) {
-            speech = App.currentText + " to " + App.currentContact.name + " should I send it?";
-        } else if (App.readyToSend) {
+        } else if (App.task.currentContact != null && App.task.currentText != null && !App.task.readyToSend) {
+            speech = App.task.currentText + " to " + App.task.currentContact.name + " should I send it?";
+        } else if (App.task.readyToSend) {
             speech = "Message sent";
-            (new Texting()).send(App.currentContact.phoneNumber, App.currentText);
-            finish();
+            (new Texting()).send(App.task.currentContact.phoneNumber, App.task.currentText);
+            App.task = new Task();
+            refreshView();
         }
 
         voice.speakOut(speech, speech);
@@ -78,6 +80,7 @@ public class MainActivity extends Activity {
 
 
     protected void onPartialSpeech(ArrayList<String> matches) {
+        Log.d("speech_match", matches.get(0));
         parseSpeech.parse(matches);
         refreshView();
     }
@@ -110,12 +113,16 @@ public class MainActivity extends Activity {
 
     private void refreshView() {
 
-        if (App.currentContact != null) {
-            ((TextView) findViewById(R.id.recipient_name)).setText(App.currentContact.name);
+        if (App.task.currentContact != null) {
+            ((TextView) findViewById(R.id.recipient_name)).setText(App.task.currentContact.name);
+        } else {
+            ((TextView) findViewById(R.id.recipient_name)).setText("");
         }
 
-        if (App.currentText != null) {
-            ((TextView) findViewById(R.id.message_text)).setText(App.currentText);
+        if (App.task.currentText != null) {
+            ((TextView) findViewById(R.id.message_text)).setText(App.task.currentText);
+        } else {
+            ((TextView) findViewById(R.id.message_text)).setText("");
         }
     }
 
@@ -131,5 +138,18 @@ public class MainActivity extends Activity {
         } else {
             ((ImageButton) findViewById(R.id.who_button)).setImageResource(R.drawable.mic_button_off);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        voice = new Voice(this);
+    }
+
+    @Override
+    protected void onStop() {
+        voice.shutDown();
+        voice = null;
+        super.onStop();
     }
 }

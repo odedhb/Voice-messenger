@@ -31,11 +31,11 @@ public class ParseSpeech {
                 String message = str.replace("text " + name + " that ", "");
 
                 nameMatcher.match(name);
-                App.currentText = message;
+                App.task.currentText = message;
             }
 
             if (Meaning.equals(Meaning.OK, str)) {
-                App.readyToSend = true;
+                App.task.readyToSend = true;
             }
 
         }

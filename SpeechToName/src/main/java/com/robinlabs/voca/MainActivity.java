@@ -1,8 +1,8 @@
 package com.robinlabs.voca;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +54,9 @@ public class MainActivity extends Activity {
                 //recognizeVoice();
             }
         });
+
+
+        ((TextView) findViewById(R.id.help_text)).setText(Html.fromHtml("<b>TEXT</b> John <b>THAT</b> I'm on my way"));
 
         //recognizeVoice();
     }

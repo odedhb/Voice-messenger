@@ -223,6 +223,9 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
 
     @Override
     public void onError(int error) {
+        if (error == SpeechRecognizer.ERROR_NO_MATCH
+                || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT)
+                        listen();
         mainActivity.isListening(false);
     }
 

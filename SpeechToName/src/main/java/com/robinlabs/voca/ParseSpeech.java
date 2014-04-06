@@ -36,8 +36,12 @@ public class ParseSpeech {
 
         if (Meaning.equals(Meaning.OK, str)) {
             App.task.readyToSend = true;
-        } else if (Meaning.equals(Meaning.NO, str) || Meaning.equals(Meaning.STOP, str)) {
+        } else if (Meaning.equals(Meaning.NO, str)) {
             App.task = new Task();
+        } else if (Meaning.equals(Meaning.STOP, str)) {
+            App.task = new Task();
+            activity.finish();
+
         }
 
 

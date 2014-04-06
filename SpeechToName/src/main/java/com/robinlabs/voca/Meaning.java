@@ -17,7 +17,7 @@ public class Meaning {
 
     static boolean equals(int meaning, String speech) {
 
-        Integer foundMeaning = meaningsMap().get(speech);
+        Integer foundMeaning = meaningsMap().get(speech.toLowerCase());
 
         if (foundMeaning == null) return false;
 
@@ -61,6 +61,7 @@ public class Meaning {
 
         meaningsMap.put("stop", STOP);
         meaningsMap.put("shut up", STOP);
+        meaningsMap.put("shut down", STOP);
         meaningsMap.put("exit", STOP);
 
         return meaningsMap;

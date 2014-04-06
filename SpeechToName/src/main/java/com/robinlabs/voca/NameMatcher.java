@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,11 +27,12 @@ public class NameMatcher {
 
     private final Activity activity;
     Map<String, Contact> CONTACTS;
-
+    diff_match_patch dmp;
 
     NameMatcher(Activity activity) {
         this.activity = activity;
         cacheNames();
+        dmp = new diff_match_patch();
     }
 
 
@@ -44,7 +44,7 @@ public class NameMatcher {
 
         if (!pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) return;
 
-        Cursor cursor = getPhonesCursor(300);
+        Cursor cursor = getPhonesCursor(500);
 
         while (cursor.moveToNext()) {
             String phoneNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
@@ -127,7 +127,6 @@ public class NameMatcher {
         builder.setItems(buttons,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-//                        activity.startActivity(CONTACTS.get(buttons[which]).intent);
                         App.task.currentContact = CONTACTS.get(buttons[which]);
                     }
                 }
@@ -156,8 +155,6 @@ public class NameMatcher {
                         score.divide(new BigDecimal((i + 1) * 4), 4, RoundingMode.HALF_UP);
 
 
-                    diff_match_patch dmp = new diff_match_patch();
-
                     int levenshtein = dmp.diff_levenshtein(dmp.diff_main(name, match));
 
                     score = score.multiply(new BigDecimal(i + 1));
@@ -176,7 +173,7 @@ public class NameMatcher {
         ArrayList<String> matches = new ArrayList<String>();
         matches.add(match);
 
-        Toast.makeText(activity, matches.toString(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(activity, matches.toString(), Toast.LENGTH_SHORT).show();
 
 
         final Map<Contact, BigDecimal> contactsWithScores = new HashMap<Contact, BigDecimal>();

@@ -13,6 +13,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,7 +25,7 @@ import java.util.Locale;
 /**
  * Created by oded on 12/8/13.
  */
-public class Voice implements TextToSpeech.OnInitListener, RecognitionListener {
+public class Voice extends UtteranceProgressListener implements TextToSpeech.OnInitListener, RecognitionListener, TextToSpeech.OnUtteranceCompletedListener {
 
     private final MainActivity mainActivity;
     TextToSpeech tts;
@@ -63,7 +64,7 @@ public class Voice implements TextToSpeech.OnInitListener, RecognitionListener {
             int result = tts.setLanguage(Locale.US);
             tts.setSpeechRate(0.8f);
 
-            int uResult = tts.setOnUtteranceProgressListener(new PolyUtteranceProgressListener(mainActivity));
+            int uResult = tts.setOnUtteranceProgressListener(this);
 
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -210,11 +211,39 @@ public class Voice implements TextToSpeech.OnInitListener, RecognitionListener {
 
     @Override
     public void onPartialResults(Bundle partialResults) {
-        Log.d("recognizer", "onPartialResults");
+        if (partialResults!=null) {
+            ArrayList<String> list = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            if (list != null && list.size() > 0)
+                mainActivity.onPartialSpeech(list);
+        }
     }
 
     @Override
     public void onEvent(int eventType, Bundle params) {
     }
 
+    /************************************************************************************************************************/
+    /********************** Listening TTS completion ************************************************************************/
+    /************************************************************************************************************************/
+    @Override
+    public void onUtteranceCompleted(String utteranceId) {
+        Log.d("TTS", "start speak");
+
+    }
+
+
+    @Override
+    public void onStart(String utteranceId) {
+
+    }
+
+    @Override
+    public void onDone(String utteranceId) {
+        listen();
+    }
+
+    @Override
+    public void onError(String utteranceId) {
+
+    }
 }

@@ -1,9 +1,7 @@
 package com.robinlabs.voca;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +14,6 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
     NameMatcher nameMatcher;
-
-    public static final int VOICE_RECOGNITION_REQUEST_CODE = 1987;
 
     Voice voice;
 
@@ -70,6 +66,12 @@ public class MainActivity extends Activity {
         } else if (Meaning.equals(Meaning.NO, matches.get(0))) {
             App.currentText = null;
         }
+    }
+
+
+    protected void onPartialSpeech(ArrayList<String> matches) {
+        App.currentText = matches.get(0);
+        refreshView();
     }
 
 

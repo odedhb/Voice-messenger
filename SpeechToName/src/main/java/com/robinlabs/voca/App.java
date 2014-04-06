@@ -8,6 +8,8 @@ public class App extends android.app.Application {
 
     static Task task;
 
+    static int userTries;
+
 
     public App() {
         instance = this;
@@ -20,5 +22,18 @@ public class App extends android.app.Application {
 
     public static void cleanStatus() {
         task = new Task();
+    }
+
+    public static String getTryAgainText() {
+        userTries++;
+        if (userTries < 3) {
+            return "Say something like: TEXT John THAT I'm on my way.";
+        }
+
+        if (userTries < 5) {
+            return "Specifically use the words .TEXT. and .THAT. in your sentence.";
+        }
+
+        return "try again";
     }
 }

@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
     private void whatNext() {
         String speech = null;
         if (App.task.currentContact == null && App.task.currentText == null) {
-            speech = "Say something like: text John that I'm on my way";
+            speech = App.getTryAgainText();
         } else if (App.task.currentContact != null && App.task.currentText != null && !App.task.readyToSend) {
             speech = App.task.currentText + " to " + App.task.currentContact.name + " should I send it?";
         } else if (App.task.readyToSend) {

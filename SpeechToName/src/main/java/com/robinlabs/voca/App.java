@@ -9,7 +9,6 @@ public class App extends android.app.Application {
     public static Contact currentContact;
     public static String currentText;
     public static boolean readyToSend;
-    public static boolean messageSent;
 
 
     public App() {
@@ -24,6 +23,5 @@ public class App extends android.app.Application {
         currentContact = null;
         currentText = null;
         readyToSend = false;
-        messageSent = false;
     }
 }

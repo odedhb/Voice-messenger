@@ -28,11 +28,16 @@ public class ParseSpeech {
             while (matcher.find()) {
 
                 String name = matcher.group(1);
-                String message = str.replace("text "+name+" that ","");
+                String message = str.replace("text " + name + " that ", "");
 
                 nameMatcher.match(name);
                 App.currentText = message;
             }
+
+            if (Meaning.equals(Meaning.OK, str)) {
+                App.readyToSend = true;
+            }
+
         }
 
     }

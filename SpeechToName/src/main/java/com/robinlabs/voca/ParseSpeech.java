@@ -22,15 +22,15 @@ public class ParseSpeech {
 
         NameMatcher nameMatcher = new NameMatcher(activity);
 
-        String str = matches.get(0);
+        String str = matches.get(0).toLowerCase();
         Pattern pattern = Pattern.compile("text (.*?) that");
         Matcher matcher = pattern.matcher(str);
         while (matcher.find()) {
 
             String name = matcher.group(1);
             String message = str
-                    .replace("text " + name + " that ", "")
-                    .replace("text " + name + " that's ", "");
+                    .replace("text " + name + " that's ", "")
+                    .replace("text " + name + " that ", "");
 
             nameMatcher.match(name);
             App.task.currentText = message;

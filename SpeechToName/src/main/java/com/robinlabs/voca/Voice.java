@@ -34,6 +34,10 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     SpeechRecognizer sr = null;
     boolean useFreeForm = true;
 
+    enum State {FREE, LISTEN, SPEEK}
+
+    State state;
+
     /*****************************************************************************************************/
     /************************* initialization/finalization ***********************************************/
     /*****************************************************************************************************/
@@ -44,6 +48,16 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
         sr = SpeechRecognizer.createSpeechRecognizer(mainActivity, findSpeechRecognizerComponent());
         if (sr != null)
             sr.setRecognitionListener(this);
+
+        state = State.FREE;
+    }
+
+    private void setState(State s) {
+        if (state == s)
+            return;
+
+        state = s;
+        mainActivity.isListening(state == State.LISTEN);
     }
 
     public void shutDown() {
@@ -90,12 +104,18 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     /*****************************************************************************************************/
     public void speakOut(String show, String read) {
 
-        runInMainUiThread(new Runnable() {
-            @Override
-            public void run() {
-                sr.stopListening();
-            }
-        });
+        if (state == State.LISTEN) {
+            runInMainUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sr.stopListening();
+                }
+            });
+            setState(State.FREE);
+        }
+
+        if (state == State.SPEEK)
+            return;
 
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS, String.valueOf(true));
@@ -103,6 +123,7 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
 //        hashMap.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_MUSIC));
         tts.speak(read, TextToSpeech.QUEUE_FLUSH, hashMap);
 
+        setState(State.SPEEK);
     }
 
     /*****************************************************************************************************/
@@ -121,6 +142,15 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     }
 
     public void listen() {
+
+        if (state == State.SPEEK) {
+            tts.stop();
+            setState(State.FREE);
+        }
+
+        if (state == State.LISTEN)
+            return;
+
         // prepare intent
         final Intent vri = findSpeechRecognizerIntent();//new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         vri.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, MainActivity.class.getPackage().getName());
@@ -200,7 +230,7 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     /*************************************************************************************************/
     @Override
     public void onReadyForSpeech(Bundle params) {
-        mainActivity.isListening(true);
+        setState(State.LISTEN);
     }
 
     @Override
@@ -218,20 +248,21 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
 
     @Override
     public void onEndOfSpeech() {
-        mainActivity.isListening(false);
+        setState(State.FREE);
     }
 
     @Override
     public void onError(int error) {
+        setState(State.FREE);
+
         if (error == SpeechRecognizer.ERROR_NO_MATCH
                 || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT)
                         listen();
-        mainActivity.isListening(false);
     }
 
     @Override
     public void onResults(Bundle results) {
-        mainActivity.isListening(false);
+        setState(State.FREE);
         if (results!=null) {
             ArrayList<String> list = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (list != null && list.size() > 0)

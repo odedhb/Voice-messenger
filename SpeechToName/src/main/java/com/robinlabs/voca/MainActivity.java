@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
 
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 1987;
 
-    TextToSpeechListener textToSpeechListener;
+    Voice voice;
 
 
     @Override
@@ -28,12 +28,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         nameMatcher = new NameMatcher(this);
-        textToSpeechListener = new TextToSpeechListener(this);
+        voice = new Voice(this);
 
         findViewById(R.id.who_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recognizeVoice();
+                voice.listen();
             }
         });
 
@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
                 App.currentContact = null;
                 App.readyToSend = false;
                 App.messageSent = false;
-                recognizeVoice();
+                //recognizeVoice();
             }
         });
         findViewById(R.id.message_text).setOnClickListener(new View.OnClickListener() {
@@ -52,29 +52,14 @@ public class MainActivity extends Activity {
                 App.currentText = null;
                 App.readyToSend = false;
                 App.messageSent = false;
-                recognizeVoice();
+                //recognizeVoice();
             }
         });
 
-        recognizeVoice();
+        //recognizeVoice();
     }
 
-    private void recognizeVoice() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, new Long(1000));
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, new Long(1000));
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Who do you want to text?");
-        startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != VOICE_RECOGNITION_REQUEST_CODE || resultCode != RESULT_OK) return;
-        ArrayList<String> matches = data.getStringArrayListExtra(
-                RecognizerIntent.EXTRA_RESULTS);
-
+    protected void onSpeech(ArrayList<String> matches) {
         if (App.currentContact == null) {
             nameMatcher.match(matches);
         } else if (App.currentText == null) {
@@ -85,8 +70,6 @@ public class MainActivity extends Activity {
         } else if (Meaning.equals(Meaning.NO, matches.get(0))) {
             App.currentText = null;
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -138,7 +121,7 @@ public class MainActivity extends Activity {
             App.messageSent = true;
         }
 
-        textToSpeechListener.speakOut(speech, speech);
+        voice.speakOut(speech, speech);
     }
 
     @Override

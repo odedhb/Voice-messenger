@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.robinlabs.SpeechToName.R;
@@ -122,5 +123,13 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
         App.cleanStatus();
+    }
+
+    public void isListening(boolean isListening) {
+        if (isListening) {
+            ((ImageButton) findViewById(R.id.who_button)).setImageResource(R.drawable.mic_button_on);
+        } else {
+            ((ImageButton) findViewById(R.id.who_button)).setImageResource(R.drawable.mic_button_off);
+        }
     }
 }

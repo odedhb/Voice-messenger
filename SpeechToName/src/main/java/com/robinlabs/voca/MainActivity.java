@@ -56,16 +56,7 @@ public class MainActivity extends Activity {
     }
 
     protected void onSpeech(ArrayList<String> matches) {
-        if (App.currentContact == null) {
-            nameMatcher.match(matches);
-        } else if (App.currentText == null) {
-            App.currentText = matches.get(0);
-            refreshView();
-        } else if (Meaning.equals(Meaning.OK, matches.get(0))) {
-            App.readyToSend = true;
-        } else if (Meaning.equals(Meaning.NO, matches.get(0))) {
-            App.currentText = null;
-        }
+        ParseSpeech.parse(matches);
     }
 
 

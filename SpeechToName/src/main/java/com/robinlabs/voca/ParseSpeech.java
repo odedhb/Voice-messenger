@@ -22,25 +22,24 @@ public class ParseSpeech {
 
         NameMatcher nameMatcher = new NameMatcher(activity);
 
-        for (String str : matches) {
-            Pattern pattern = Pattern.compile("text (.*?) that");
-            Matcher matcher = pattern.matcher(str);
-            while (matcher.find()) {
+        String str = matches.get(0);
+        Pattern pattern = Pattern.compile("text (.*?) that");
+        Matcher matcher = pattern.matcher(str);
+        while (matcher.find()) {
 
-                String name = matcher.group(1);
-                String message = str.replace("text " + name + " that ", "");
+            String name = matcher.group(1);
+            String message = str.replace("text " + name + " that ", "");
 
-                nameMatcher.match(name);
-                App.task.currentText = message;
-            }
-
-            if (Meaning.equals(Meaning.OK, str)) {
-                App.task.readyToSend = true;
-            } else if (Meaning.equals(Meaning.NO, str) || Meaning.equals(Meaning.STOP, str)) {
-                App.task = new Task();
-            }
-
+            nameMatcher.match(name);
+            App.task.currentText = message;
         }
+
+        if (Meaning.equals(Meaning.OK, str)) {
+            App.task.readyToSend = true;
+        } else if (Meaning.equals(Meaning.NO, str) || Meaning.equals(Meaning.STOP, str)) {
+            App.task = new Task();
+        }
+
 
     }
 

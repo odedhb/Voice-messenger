@@ -149,8 +149,6 @@ public class NameMatcher {
                 for (String name : nameParts) {
 
                     score = new BigDecimal(10000);
-                    //the lower the better
-
 
                     if (name.equals(match))
                         score.divide(new BigDecimal((i + 1) * 4), 4, RoundingMode.HALF_UP);

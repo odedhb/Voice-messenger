@@ -62,8 +62,9 @@ public class MainActivity extends Activity {
     }
 
     protected void onSpeech(ArrayList<String> matches) {
-        onPartialSpeech(matches);
+        parseSpeech.parse(matches);
         whatNext();
+        refreshView();
     }
 
     private void whatNext() {
@@ -85,8 +86,6 @@ public class MainActivity extends Activity {
 
     protected void onPartialSpeech(ArrayList<String> matches) {
         Log.d("speech_match", matches.get(0));
-        parseSpeech.parse(matches);
-        refreshView();
     }
 
 

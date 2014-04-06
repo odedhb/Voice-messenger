@@ -16,12 +16,15 @@ public class MainActivity extends Activity {
     NameMatcher nameMatcher;
 
     Voice voice;
+    private ParseSpeech parseSpeech;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        parseSpeech = new ParseSpeech(this);
 
         nameMatcher = new NameMatcher(this);
         voice = new Voice(this);
@@ -38,7 +41,6 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 App.currentContact = null;
                 App.readyToSend = false;
-                App.messageSent = false;
                 //recognizeVoice();
             }
         });
@@ -47,7 +49,6 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 App.currentText = null;
                 App.readyToSend = false;
-                App.messageSent = false;
                 //recognizeVoice();
             }
         });
@@ -56,22 +57,28 @@ public class MainActivity extends Activity {
     }
 
     protected void onSpeech(ArrayList<String> matches) {
-        if (App.currentContact == null) {
-            nameMatcher.match(matches);
-        } else if (App.currentText == null) {
-            App.currentText = matches.get(0);
-            refreshView();
-        } else if (Meaning.equals(Meaning.OK, matches.get(0))) {
-            App.readyToSend = true;
-        } else if (Meaning.equals(Meaning.NO, matches.get(0))) {
-            App.currentText = null;
+        whatNext();
+    }
+
+    private void whatNext() {
+        String speech = null;
+        if (App.currentContact == null && App.currentText == null) {
+            speech = "Say something like: text John that I'm on my way";
+        } else if (App.currentContact != null && App.currentText != null && !App.readyToSend) {
+            speech = App.currentText + " to " + App.currentContact.name + " should I send it?";
+        } else if (App.readyToSend) {
+            speech = "Message sent";
+            (new Texting()).send(App.currentContact.phoneNumber, App.currentText);
+            finish();
         }
+
+        voice.speakOut(speech, speech);
     }
 
 
     protected void onPartialSpeech(ArrayList<String> matches) {
-        App.currentText = matches.get(0);
-        ((TextView) findViewById(R.id.message_text)).setText(App.currentText);
+        parseSpeech.parse(matches);
+        refreshView();
     }
 
 
@@ -97,7 +104,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshView();
+        voice.listen();
     }
 
     private void refreshView() {
@@ -109,21 +116,6 @@ public class MainActivity extends Activity {
         if (App.currentText != null) {
             ((TextView) findViewById(R.id.message_text)).setText(App.currentText);
         }
-
-        String speech = null;
-        if (App.currentContact == null && App.currentText == null) {
-            speech = "Who would you like to text?";
-        } else if (App.currentContact != null && App.currentText == null) {
-            speech = "Say your message for " + App.currentContact.name;
-        } else if (App.currentContact != null && App.currentText != null && !App.readyToSend) {
-            speech = App.currentText + " should I send it?";
-        } else if (App.readyToSend && !App.messageSent) {
-            speech = "Message sent";
-            (new Texting()).send(App.currentContact.phoneNumber, App.currentText);
-            App.messageSent = true;
-        }
-
-        voice.speakOut(speech, speech);
     }
 
     @Override

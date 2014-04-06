@@ -42,8 +42,6 @@ public class NameMatcher {
 
         PackageManager pm = activity.getPackageManager();
 
-//        long epoch = System.currentTimeMillis() - DateUtils.YEAR_IN_MILLIS;
-
         if (!pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) return;
 
         Cursor cursor = getPhonesCursor(300);
@@ -159,12 +157,6 @@ public class NameMatcher {
                     if (name.contains(match))
                         score.divide(new BigDecimal((i + 1) * 4), 4, RoundingMode.HALF_UP);
 
-//            String subString = matches.get(i).substring(1, matches.get(i).length() - 1);
-
-//            if (contact.name.contains(subString)) score.multiply(new BigDecimal(4));
-
-//            diff_levenshtein()
-//            diff_main(text1, text2)
 
                     diff_match_patch dmp = new diff_match_patch();
 
@@ -195,9 +187,6 @@ public class NameMatcher {
 
             BigDecimal score = calculateScore(contact, matches);
 
-/*            if (score.compareTo(new BigDecimal(1)) == 1) {
-//                    startActivity(CONTACTS.get(contactName).intent);
-            }*/
             contactsWithScores.put(CONTACTS.get(contact.name), score);
 
         }
@@ -213,7 +202,5 @@ public class NameMatcher {
 
 
         App.task.currentContact = finalContacts.get(0);
-
-//        showContactsDialog(contactsWithScores, finalContacts);
     }
 }

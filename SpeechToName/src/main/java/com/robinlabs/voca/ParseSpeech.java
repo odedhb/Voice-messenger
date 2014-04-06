@@ -28,7 +28,9 @@ public class ParseSpeech {
         while (matcher.find()) {
 
             String name = matcher.group(1);
-            String message = str.replace("text " + name + " that ", "");
+            String message = str
+                    .replace("text " + name + " that ", "")
+                    .replace("text " + name + " that's ", "");
 
             nameMatcher.match(name);
             App.task.currentText = message;

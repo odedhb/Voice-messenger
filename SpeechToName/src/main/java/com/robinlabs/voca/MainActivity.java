@@ -1,6 +1,7 @@
 package com.robinlabs.voca;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -152,4 +153,5 @@ public class MainActivity extends Activity {
         voice = null;
         super.onStop();
     }
+
 }

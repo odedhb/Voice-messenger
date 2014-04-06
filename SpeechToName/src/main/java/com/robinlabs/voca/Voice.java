@@ -200,17 +200,16 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     /*************************************************************************************************/
     @Override
     public void onReadyForSpeech(Bundle params) {
-        Log.d("recognizer", "onReadyForSpeech");
+        mainActivity.isListening(true);
     }
 
     @Override
     public void onBeginningOfSpeech() {
-        Log.d("recognizer", "onBeginningOfSpeech");
     }
 
     @Override
     public void onRmsChanged(float rmsdB) {
-
+        //mainActivity.
     }
 
     @Override
@@ -219,16 +218,17 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
 
     @Override
     public void onEndOfSpeech() {
-        Log.d("recognizer", "onEndOfSpeech");
+        mainActivity.isListening(false);
     }
 
     @Override
     public void onError(int error) {
-        Log.d("recognizer", "error "+error);
+        mainActivity.isListening(false);
     }
 
     @Override
     public void onResults(Bundle results) {
+        mainActivity.isListening(false);
         if (results!=null) {
             ArrayList<String> list = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (list != null && list.size() > 0)

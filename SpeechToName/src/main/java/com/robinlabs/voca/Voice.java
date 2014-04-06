@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -49,8 +51,13 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
             tts.shutdown();
         }
         if (sr != null) {
-            sr.destroy();
-            sr = null;
+            runInMainUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sr.destroy();
+                    sr = null;
+                }
+            });
         }
     }
 
@@ -83,9 +90,12 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     /*****************************************************************************************************/
     public void speakOut(String show, String read) {
 
-//        AudioManager am = (AudioManager) mainActivity.getSystemService(Context.AUDIO_SERVICE);
-
-//        am.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        runInMainUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sr.stopListening();
+            }
+        });
 
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS, String.valueOf(true));
@@ -98,6 +108,18 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
     /*****************************************************************************************************/
     /********** speech to text ***************************************************************************/
     /*****************************************************************************************************/
+    public static boolean inMainGuiThread() {
+        Looper ml=Looper.myLooper();
+        return ml!=null&&ml==Looper.getMainLooper();
+    }
+
+    public static void runInMainUiThread(Runnable r) {
+        if (inMainGuiThread())
+            r.run();
+        else
+            new Handler(Looper.getMainLooper()).post(r);
+    }
+
     public void listen() {
         // prepare intent
         final Intent vri = findSpeechRecognizerIntent();//new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -117,7 +139,12 @@ public class Voice extends UtteranceProgressListener implements TextToSpeech.OnI
         // vri.putExtra(RecognizerIntent.EXTRA_LANGUAGE, newLang);
 
         if (sr != null)
-            sr.startListening(vri);
+            runInMainUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sr.startListening(vri);
+                }
+            });
     }
 
     protected ComponentName findSpeechRecognizerComponent() {

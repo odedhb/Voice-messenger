@@ -181,7 +181,11 @@ public class NameMatcher {
         return scores.first();
     }
 
-    public void match(ArrayList<String> matches) {
+    public void match(String match) {
+
+        ArrayList<String> matches = new ArrayList<String>();
+        matches.add(match);
+
         Toast.makeText(activity, matches.toString(), Toast.LENGTH_SHORT).show();
 
 

@@ -16,12 +16,15 @@ public class MainActivity extends Activity {
     NameMatcher nameMatcher;
 
     Voice voice;
+    private ParseSpeech parseSpeech;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        parseSpeech = new ParseSpeech(this);
 
         nameMatcher = new NameMatcher(this);
         voice = new Voice(this);
@@ -56,7 +59,7 @@ public class MainActivity extends Activity {
     }
 
     protected void onSpeech(ArrayList<String> matches) {
-        ParseSpeech.parse(matches);
+        parseSpeech.parse(matches);
     }
 
 
